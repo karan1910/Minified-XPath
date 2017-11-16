@@ -1,0 +1,33 @@
+{
+    "manifest_version": 2,
+    "name": "Minified XPATH Version-3",
+    "description": "This extension allows the user to get minified Xpath",
+    "version": "3.0",
+    "browser_action": {
+        "default_icon": {
+          "19": "static/icon_19x19.png",
+          "38": "static/icon_38x38.png"
+        }
+    },
+    "background": {
+        "page": "background.html",
+        "script": "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "css": ["content.css"],
+            "js": ["content.js"]
+        }
+    ],
+    "permissions": [
+        "http://*/",
+        "http://www.google.com/",
+        "tabs"
+    ],
+    "web_accessible_resources": [
+        "bar.css",
+        "bar.html",
+        "bar.js"
+    ]
+}
