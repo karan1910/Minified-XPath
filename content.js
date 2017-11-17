@@ -644,10 +644,7 @@ xh.Bar = function() {
   this.barFrame_.classList.add('hidden');
 
   document.addEventListener('keydown', this.boundKeyDown_);
-  chrome.runtime.onMessage.addListener(this.bound
-  
-  
-  );
+  chrome.runtime.onMessage.addListener(this.boundHandleRequest_);
 };
 
 xh.Bar.prototype.hidden_ = function() {
