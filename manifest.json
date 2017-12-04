@@ -23,7 +23,8 @@
     "permissions": [
         "http://*/",
         "http://www.google.com/",
-        "tabs"
+        "tabs",
+        "downloads"
     ],
     "web_accessible_resources": [
         "bar.css",

@@ -107,29 +107,83 @@ function saveToFile(){
         msg = 'Unknown Error';
         break;
     };
-  
     console.log('Error: ' + msg);
   }
 
-  console.log("in save to file");
-  window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
-   window.requestFileSystem(window.TEMPORARY, 5*1024*1024, function(fs) {
-    console.log("fs" + fs);
-    fs.root.getFile('20171115log.txt', {create: true}, function(fileEntry) {
-      // Create a FileWriter object for our FileEntry (log.txt).
-      fileEntry.createWriter(function(fileWriter) {
-        fileWriter.seek(fileWriter.length); // Start write position at EOF.
-        // Create a new Blob and write it to log.txt.
-        var blob = new Blob(['Hello World'], {type: 'text/plain'});
-        fileWriter.write(blob);
-        location.href = fileEntry.toURL();
+  function onInitFs(fs) {
+
+    var fileUpload = function() {
+      fs.root.getFile('log1.txt', {}, function(fileEntry) {
+        // Get a File object representing the file,
+        // then use FileReader to read its contents.
+        fileEntry.file(function(file) {
+           var reader = new FileReader();
+    
+           reader.onloadend = function(e) {
+            //  var txtArea = document.createElement('textarea');
+            //  txtArea.value = this.result;
+            var blob = new Blob([this.result], {type: 'text/plain'});
+            var blobUrl = URL.createObjectURL(blob);
+            //var link = document.createElement("a"); // Or maybe get it from the current document
+            var link = document.getElementById("download");
+            if(link === null){
+              link = document.createElement("a");
+              link.setAttribute("id", "download");
+              link.setAttribute("style", "color:wheat");
+              link.href = blobUrl;
+              link.download = "log.txt";
+              link.innerHTML = "Download";
+              document.body.appendChild(link);
+            }
+            else{
+              link.href = blobUrl;
+              /*if(document.getElementById("download").)
+              greenyellow*/
+            }
+            
+           };
+           reader.readAsText(file);
+        }, errorHandler);
+    
       }, errorHandler);
+    }
+
+    fs.root.getFile('log1.txt', {create: true}, function(fileEntry) {
+      fileEntry.createWriter(function(fileWriter) {
+        fileWriter.onwriteend = function(e) {
+          console.log('Write completed.');
+        };
+        fileWriter.onerror = function(e) {
+          console.log('Write failed: ' + e.toString());
+        };
+        fileWriter.seek(fileWriter.length);
+        // Create a new Blob and write it to log.txt.
+        var blob = new Blob([queryEl.value + ' :: ' + resultsEl.value + '\r\n'], {type: 'text/plain'});
+        fileWriter.write(blob);
+        // var blobUrl = URL.createObjectURL(blob);
+        // var link = document.createElement("a"); // Or maybe get it from the current document
+        // link.href = blobUrl;
+        // link.download = "log.txt";
+        // link.innerHTML = "Click here to download the file";
+        // document.body.appendChild(link);  
+  
+      }, errorHandler);
+  
     }, errorHandler);
-  }, errorHandler);
+    fileUpload();
+  }
+
+    //window.webkitRequestFileSystem(window.TEMPORARY, 1024*1024, onInitFs, errorHandler);
+    window.webkitRequestFileSystem(window.TEMPORARY, 1024*1024, onInitFs, errorHandler);
+    window.webkitStorageInfo.requestQuota(PERSISTENT, 1024*1024, function(grantedBytes) {
+      window.webkitRequestFileSystem(PERSISTENT, grantedBytes, onInitFs, errorHandler);
+    }, function(e) {
+      console.log('Error', e);
+    });
 }
 
 queryEl.addEventListener('keyup', evaluateQuery);
-queryEl.addEventListener('mouseup', evaluateQuery);
+queryEl.addEventListener('mouseup', evaluateQuery); 
 
 // Add mousemove listener so we can detect Shift + mousemove inside iframe.
 document.addEventListener('mousemove', handleMouseMove);
