@@ -30,6 +30,7 @@ var queryEl = document.getElementById('query');
 var resultsEl = document.getElementById('results');
 var nodeCountEl = document.getElementById('node-count');
 var btn = document.getElementById('btnSave');
+var res;
 
 var nodeCountText = document.createTextNode('0');
 nodeCountEl.appendChild(nodeCountText);
@@ -82,6 +83,61 @@ var handleKeyDown = function(e) {
     chrome.runtime.sendMessage({type: 'hideBar'});
   }
 };
+
+function saveToFile2() {
+  function readBlob(opt_startByte, opt_stopByte) {
+    var files = document.getElementById('files').files;
+    if (!files.length) {
+      alert('Please select a file!');
+      return;
+    }
+
+    var file = files[0];
+    var start = parseInt(opt_startByte) || 0;
+    var stop = parseInt(opt_stopByte) || file.size - 1;
+
+    var reader = new FileReader();
+
+    // If we use onloadend, we need to check the readyState.
+    reader.onloadend = function(evt) {
+      if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+        console.log(typeof evt.target.result);
+        if(!res){
+          res = evt.target.result;
+        }
+        var idx = res.indexOf('::,');
+        res = res.substring(0, idx + 2) + queryEl.value + '\r\n' + res.substring(idx + 3, res.length);
+        //console.log(idx);
+        var blob = new Blob([res], {type: 'text/plain'});
+        var blobUrl = URL.createObjectURL(blob);
+
+        //var link = document.createElement("a"); // Or maybe get it from the current document
+        var link = document.getElementById("download");
+        if(link === null){
+          link = document.createElement("a");
+          link.setAttribute("id", "download");
+          link.setAttribute("style", "color:wheat");
+          link.href = blobUrl;
+          link.download = "log.txt";
+          link.innerHTML = "Download";
+          document.body.appendChild(link);
+        }
+        else{
+          link.href = blobUrl;
+        }
+
+
+      }
+    };
+
+    var blob = file.slice(start, stop + 1);
+    console.log(blob);
+    console.log(file);
+    reader.readAsText(blob);
+  }
+  readBlob();
+}
+
 
 function saveToFile(){
   function errorHandler(e) {
@@ -193,4 +249,4 @@ document.addEventListener('keydown', handleKeyDown);
 
 chrome.runtime.onMessage.addListener(handleRequest);
 
-btn.addEventListener('click', saveToFile);
+btn.addEventListener('click', saveToFile2);
