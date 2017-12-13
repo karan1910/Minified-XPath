@@ -54,7 +54,7 @@ var handleRequest = function(request, sender, cb) {
       queryEl.value = request.query;
     }
     if (request.results !== null) {
-      resultsEl.value = request.results[0];
+      resultsEl.value = '';//request.results[0];
       nodeCountText.nodeValue = request.results[1];  
     }
   }
