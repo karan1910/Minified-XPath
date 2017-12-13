@@ -34,7 +34,7 @@ var res;
 
 var nodeCountText = document.createTextNode('0');
 nodeCountEl.appendChild(nodeCountText);
-
+var cnt = 1;
 // Used by handleMouseMove() to enforce a cooldown period on move.
 var lastMoveTimeInMs = 0;
 
@@ -105,8 +105,12 @@ function saveToFile2() {
         if(!res){
           res = evt.target.result;
         }
-        var idx = res.indexOf('::,');
-        res = res.substring(0, idx + 2) + queryEl.value + '\r\n' + res.substring(idx + 3, res.length);
+        if(resultsEl.value) {
+          res = res + resultsEl.value + '::' + queryEl.value + '\r\n';
+        }
+        else {
+          res = res + 'en' + (cnt++) + '::' + queryEl.value + '\r\n';
+        }
         //console.log(idx);
         var blob = new Blob([res], {type: 'text/plain'});
         var blobUrl = URL.createObjectURL(blob);
@@ -125,8 +129,6 @@ function saveToFile2() {
         else{
           link.href = blobUrl;
         }
-
-
       }
     };
 

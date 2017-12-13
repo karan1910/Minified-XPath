@@ -645,6 +645,7 @@ xh.Bar = function() {
 
   document.addEventListener('keydown', this.boundKeyDown_);
   chrome.runtime.onMessage.addListener(this.boundHandleRequest_);
+  chrome.runtime.sendMessage({type: 'moveBar'});
 };
 
 xh.Bar.prototype.hidden_ = function() {
