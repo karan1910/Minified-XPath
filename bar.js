@@ -30,7 +30,7 @@ var queryEl = document.getElementById('query');
 var resultsEl = document.getElementById('results');
 var nodeCountEl = document.getElementById('node-count');
 var btn = document.getElementById('btnSave');
-var res;
+var res = '';
 
 var nodeCountText = document.createTextNode('0');
 nodeCountEl.appendChild(nodeCountText);
@@ -240,6 +240,34 @@ function saveToFile(){
     });
 }
 
+function saveWithoutAskingForFile() {
+  if(resultsEl.value) {
+    res = res + resultsEl.value + '::' + queryEl.value + '\r\n';
+  }
+  else {
+    res = res + 'en' + (cnt++) + '::' + queryEl.value + '\r\n';
+  }
+  //console.log(idx);
+  var blob = new Blob([res], {type: 'text/plain'});
+  var blobUrl = URL.createObjectURL(blob);
+  //var link = document.createElement("a"); // Or maybe get it from the current document
+  var link = document.getElementById("download");
+  if(link === null) {
+    link = document.createElement("a");
+    link.setAttribute("id", "download");
+    link.setAttribute("style", "color:wheat");
+    link.href = blobUrl;
+    link.download = "log.txt";
+    link.innerHTML = "Download";
+    document.body.appendChild(link);
+  }
+  else {
+    link.href = blobUrl;
+    /*if(document.getElementById("download").)
+    greenyellow*/
+  }
+}
+
 queryEl.addEventListener('keyup', evaluateQuery);
 queryEl.addEventListener('mouseup', evaluateQuery); 
 
@@ -251,4 +279,4 @@ document.addEventListener('keydown', handleKeyDown);
 
 chrome.runtime.onMessage.addListener(handleRequest);
 
-btn.addEventListener('click', saveToFile2);
+btn.addEventListener('click', saveWithoutAskingForFile);
