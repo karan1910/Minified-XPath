@@ -247,6 +247,7 @@ function saveWithoutAskingForFile() {
   else {
     res = res + 'en' + (cnt++) + '::' + queryEl.value + '\r\n';
   }
+  resultsEl.value = '';
   //console.log(idx);
   var blob = new Blob([res], {type: 'text/plain'});
   var blobUrl = URL.createObjectURL(blob);
