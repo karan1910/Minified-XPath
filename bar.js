@@ -106,10 +106,10 @@ function saveToFile2() {
           res = evt.target.result;
         }
         if(resultsEl.value) {
-          res = res + resultsEl.value + '::' + queryEl.value + '\r\n';
+          res = res + resultsEl.value + ',"' + queryEl.value + '"\r\n';
         }
         else {
-          res = res + 'en' + (cnt++) + '::' + queryEl.value + '\r\n';
+          res = res + 'en' + (cnt++) + ',"' + queryEl.value + '"\r\n';
         }
         //console.log(idx);
         var blob = new Blob([res], {type: 'text/plain'});
@@ -117,18 +117,7 @@ function saveToFile2() {
 
         //var link = document.createElement("a"); // Or maybe get it from the current document
         var link = document.getElementById("download");
-        if(link === null){
-          link = document.createElement("a");
-          link.setAttribute("id", "download");
-          link.setAttribute("style", "color:wheat");
-          link.href = blobUrl;
-          link.download = "log.txt";
-          link.innerHTML = "Download";
-          document.body.appendChild(link);
-        }
-        else{
-          link.href = blobUrl;
-        }
+        link.href = blobUrl;
       }
     };
 
@@ -224,7 +213,6 @@ function saveToFile(){
         // link.download = "log.txt";
         // link.innerHTML = "Click here to download the file";
         // document.body.appendChild(link);  
-  
       }, errorHandler);
   
     }, errorHandler);
@@ -242,10 +230,10 @@ function saveToFile(){
 
 function saveWithoutAskingForFile() {
   if(resultsEl.value) {
-    res = res + resultsEl.value + '::' + queryEl.value + '\r\n';
+    res = res + resultsEl.value + ',"' + queryEl.value + '"\r\n';
   }
   else {
-    res = res + 'en' + (cnt++) + '::' + queryEl.value + '\r\n';
+    res = res + 'en' + (cnt++) + ',"' + queryEl.value + '"\r\n';
   }
   resultsEl.value = '';
   //console.log(idx);
@@ -253,20 +241,7 @@ function saveWithoutAskingForFile() {
   var blobUrl = URL.createObjectURL(blob);
   //var link = document.createElement("a"); // Or maybe get it from the current document
   var link = document.getElementById("download");
-  if(link === null) {
-    link = document.createElement("a");
-    link.setAttribute("id", "download");
-    link.setAttribute("style", "color:wheat");
-    link.href = blobUrl;
-    link.download = "log.txt";
-    link.innerHTML = "Download";
-    document.body.appendChild(link);
-  }
-  else {
-    link.href = blobUrl;
-    /*if(document.getElementById("download").)
-    greenyellow*/
-  }
+  link.href = blobUrl;
 }
 
 queryEl.addEventListener('keyup', evaluateQuery);
