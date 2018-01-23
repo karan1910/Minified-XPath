@@ -30,11 +30,11 @@ var queryEl = document.getElementById('query');
 var resultsEl = document.getElementById('results');
 var nodeCountEl = document.getElementById('node-count');
 var btn = document.getElementById('btnSave');
-var res;
+var res = '';
 
 var nodeCountText = document.createTextNode('0');
 nodeCountEl.appendChild(nodeCountText);
-
+var cnt = 1;
 // Used by handleMouseMove() to enforce a cooldown period on move.
 var lastMoveTimeInMs = 0;
 
@@ -54,7 +54,7 @@ var handleRequest = function(request, sender, cb) {
       queryEl.value = request.query;
     }
     if (request.results !== null) {
-      resultsEl.value = request.results[0];
+      resultsEl.value = '';//request.results[0];
       nodeCountText.nodeValue = request.results[1];  
     }
   }
@@ -105,8 +105,12 @@ function saveToFile2() {
         if(!res){
           res = evt.target.result;
         }
-        var idx = res.indexOf('::,');
-        res = res.substring(0, idx + 2) + queryEl.value + '\r\n' + res.substring(idx + 3, res.length);
+        if(resultsEl.value) {
+          res = res + resultsEl.value + '::' + queryEl.value + '\r\n';
+        }
+        else {
+          res = res + 'en' + (cnt++) + '::' + queryEl.value + '\r\n';
+        }
         //console.log(idx);
         var blob = new Blob([res], {type: 'text/plain'});
         var blobUrl = URL.createObjectURL(blob);
@@ -125,8 +129,6 @@ function saveToFile2() {
         else{
           link.href = blobUrl;
         }
-
-
       }
     };
 
@@ -238,6 +240,35 @@ function saveToFile(){
     });
 }
 
+function saveWithoutAskingForFile() {
+  if(resultsEl.value) {
+    res = res + resultsEl.value + '::' + queryEl.value + '\r\n';
+  }
+  else {
+    res = res + 'en' + (cnt++) + '::' + queryEl.value + '\r\n';
+  }
+  resultsEl.value = '';
+  //console.log(idx);
+  var blob = new Blob([res], {type: 'text/plain'});
+  var blobUrl = URL.createObjectURL(blob);
+  //var link = document.createElement("a"); // Or maybe get it from the current document
+  var link = document.getElementById("download");
+  if(link === null) {
+    link = document.createElement("a");
+    link.setAttribute("id", "download");
+    link.setAttribute("style", "color:wheat");
+    link.href = blobUrl;
+    link.download = "log.txt";
+    link.innerHTML = "Download";
+    document.body.appendChild(link);
+  }
+  else {
+    link.href = blobUrl;
+    /*if(document.getElementById("download").)
+    greenyellow*/
+  }
+}
+
 queryEl.addEventListener('keyup', evaluateQuery);
 queryEl.addEventListener('mouseup', evaluateQuery); 
 
@@ -249,4 +280,4 @@ document.addEventListener('keydown', handleKeyDown);
 
 chrome.runtime.onMessage.addListener(handleRequest);
 
-btn.addEventListener('click', saveToFile2);
+btn.addEventListener('click', saveWithoutAskingForFile);
